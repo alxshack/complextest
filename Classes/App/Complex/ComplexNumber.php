@@ -130,13 +130,13 @@ class ComplexNumber
         if ($this->isDividedByZero) {
             return '[divide_by_zero]';
         }
-        $separator = ($this->imaginary > 0) ? '+' : '';
+        $separator = ($this->imaginary >= 0) ? '+' : '';
         return $this->real . $separator . $this->imaginary . 'i';
     }
 
     private function parseComplex($param)
     {
-        if (preg_match('/^([-+]?\d+\.?\d*?)([-+]\d+\.?\d+?)i$/i', $param, $parsed)) {
+        if (preg_match('/^([-+]?\d+\.?\d*?)([-+]\d+\.?\d*?)i$/i', $param, $parsed)) {
             $this->real = $parsed[1];
             $this->imaginary = $parsed[2];
         } else {
