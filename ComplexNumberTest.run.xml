@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="ComplexNumberTest" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+    <TestRunner class="App\Complex\ComplexNumberTest" file="$PROJECT_DIR$/tests/Classes/App/Complex/ComplexNumberTest.php" scope="Class" />
+    <method v="2" />
+  </configuration>
+</component>
