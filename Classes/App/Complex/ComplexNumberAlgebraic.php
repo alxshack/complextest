@@ -99,40 +99,24 @@ class ComplexNumberAlgebraic implements ComplexNumberInterface
         return $this;
     }
 
-    /**
-     * @return float
-     */
     public function getReal(): float
     {
         return $this->real;
     }
 
-    /**
-     * @return float
-     */
     public function getImaginary(): float
     {
         return $this->imaginary;
     }
 
-    public function setAngle(float $real): ComplexNumberInterface
-    {
-        return $this;
-    }
-
-    public function setMagnitude(): ComplexNumberInterface
-    {
-        return $this;
-    }
-
     public function getAngle(): float
     {
-        return 0;
+        return atan2($this->imaginary, $this->real);
     }
 
     public function getMagnitude(): float
     {
-        return 0;
+        return sqrt(($this->real ** 2) + ($this->imaginary ** 2));
     }
 
     /**
@@ -157,7 +141,6 @@ class ComplexNumberAlgebraic implements ComplexNumberInterface
 
         $separator = ($this->imaginary >= 0) ? '+' : '';
         return $this->real . $separator . $this->imaginary . 'i';
-
     }
 
     private function parseComplex($param)
@@ -169,4 +152,57 @@ class ComplexNumberAlgebraic implements ComplexNumberInterface
             throw new \Exception('Неверный строковый формат описания комплексного числа');
         }
     }
+
+    public function toAlgebraic(): ComplexNumberInterface
+    {
+        return $this;
+    }
+
+    public function toTrigonometric(): ComplexNumberInterface
+    {
+        return new ComplexNumberTrigonometric(
+            [
+                'm' => $this->getMagnitude(),
+                'a' => $this->getAngle()
+            ]
+        );
+    }
+
+    public function getType(): string
+    {
+        return self::TYPE;
+    }
+
+    /**
+     * сложение комплексных чисел
+     * @param ComplexNumberInterface $b
+     * @return ComplexNumberInterface
+     */
+    public function add(ComplexNumberInterface $b): ComplexNumberInterface
+    {
+        /** @var ComplexNumberAlgebraic $valB */
+        $valB = $b->toAlgebraic();
+        return new ComplexNumberAlgebraic(
+            [
+                'r' => $this->real + $valB->getReal(),
+                'i' => $this->imaginary + $valB->getImaginary()
+            ]
+        );
+    }
+
+    /**
+     * приведение к отрицательному значению
+     * @param ComplexNumberInterface $x
+     * @return ComplexNumberInterface
+     */
+    public function inverse(): ComplexNumberTrigonometric
+    {
+        return new ComplexNumberAlgebraic(
+            [
+                'r' => -$this->real,
+                'i' => -$this->imaginary
+            ]
+        );
+    }
+
 }

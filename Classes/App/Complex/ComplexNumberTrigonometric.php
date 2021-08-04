@@ -23,9 +23,8 @@ class ComplexNumberTrigonometric implements ComplexNumberInterface
     }
 
     /**
-     * установка значения комплексного числа
-     * задаётся массивом ['r' => R, 'i' => I], например ['r' => 3.14, 'i' => 5.2]
-     * либо строкой формата "R±Ii", например "3.14+5.2i"
+     * установка значения комплексного числа в тригонометрическом формате
+     * задаётся массивом ['m' => Magnitude, 'a' => Angle], например ['m' => 10, 'a' => 3.1415]
      * @param mixed $params
      * @return $this
      */
@@ -36,34 +35,35 @@ class ComplexNumberTrigonometric implements ComplexNumberInterface
                 case 'integer':
                 case 'float':
                 case 'double':
-                    $this->real = $params;
-                    $this->imaginary = 0;
+                    $this->angle = 0;
+                    $this->magnitude = $params;
                     break;
 
                 case 'array':
-                    $params = $params ?: ['r' => 0, 'i' => 0];
-                    if (!array_key_exists('r', $params)) {
-                        $params['r'] = $params[0] ?: 0;
+                    $params = $params ?: ['a' => 0, 'm' => 0];
+                    if (!array_key_exists('m', $params)) {
+                        $params['m'] = $params[0] ?: 0;
                     }
-                    if (!array_key_exists('i', $params)) {
-                        $params['i'] = $params[1] ?: 0;
+                    if (!array_key_exists('a', $params)) {
+                        $params['a'] = $params[1] ?: 0;
                     }
-                    $this->real = $params['r'];
-                    $this->imaginary = $params['i'];
+                    $this->magnitude = $params['m'];
+                    $this->angle = $params['a'];
                     break;
 
                 case 'string':
                     if ($params === '') {
-                        $this->real = 0;
-                        $this->imaginary = 0;
+                        $this->magnitude = 0;
+                        $this->angle = 0;
                     } else {
-                        $this->parseComplex($params);
+                        /** @todo раскомментировать, когда будет готов парсер */
+                        // $this->parseComplex($params);
                     }
                     break;
 
                 default:
-                    $this->real = 0;
-                    $this->imaginary = 0;
+                    $this->magnitude = 0;
+                    $this->angle = 0;
 
             }
         } catch (\Throwable $exception) {
@@ -79,60 +79,36 @@ class ComplexNumberTrigonometric implements ComplexNumberInterface
         return $this->toPrinted();
     }
 
-    /**
-     * @param float $real
-     * @return $this
-     */
-    public function setReal(float $real): ComplexNumberInterface
+    public function setAngle(float $angle): ComplexNumberInterface
     {
-        $this->real = $real;
+        $this->angle = $angle;
         return $this;
     }
 
-    /**
-     * @param float $imaginary
-     * @return $this
-     */
-    public function setImaginary(float $imaginary): ComplexNumberInterface
+    public function setMagnitude(float $magnitude): ComplexNumberInterface
     {
-        $this->imaginary = $imaginary;
+        $this->magnitude = $magnitude;
         return $this;
     }
 
-    /**
-     * @return float
-     */
     public function getReal(): float
     {
-        return $this->real;
+        return $this->magnitude * cos($this->angle);
     }
 
-    /**
-     * @return float
-     */
     public function getImaginary(): float
     {
-        return $this->imaginary;
-    }
-
-    public function setAngle(float $real): ComplexNumberInterface
-    {
-        return $this;
-    }
-
-    public function setMagnitude(): ComplexNumberInterface
-    {
-        return $this;
+        return $this->magnitude * sin($this->angle);
     }
 
     public function getAngle(): float
     {
-        return 0;
+        return $this->angle;
     }
 
     public function getMagnitude(): float
     {
-        return 0;
+        return $this->magnitude;
     }
 
     /**
@@ -155,23 +131,86 @@ class ComplexNumberTrigonometric implements ComplexNumberInterface
             return '[divide_by_zero]';
         }
 
-        $separator = ($this->imaginary >= 0) ? '+' : '';
-        return $this->real . $separator . $this->imaginary . 'i';
+        $module = '|' . $this->magnitude . '|';
+
+        return $module . '(cos(' . $this->angle . ')+isin(' . $this->angle . '))';
 
     }
 
-    private function parseComplex($param, $toanother = false)
+    private function parseComplex($param)
     {
-
-        if ($toanother) {
-            return new ComplexNumberAlgebraic();
-        }
-
-        if (preg_match('/^([-+]?\d+\.?\d*?)([-+]\d+\.?\d*?)i$/i', $param, $parsed)) {
-            $this->real = $parsed[1];
-            $this->imaginary = $parsed[2];
+        /** @todo протестить регулярку */
+        if (preg_match('/^\|(\d*\.?\d*?)\|\(cos\((\d*\.?\d*?)\)\+isin\((\d*\.?\d*?)\)\)$/i', $param, $parsed)) {
+            $this->magnitude = $parsed[1];
+            $this->angle = $parsed[2];
         } else {
             throw new \Exception('Неверный строковый формат описания комплексного числа');
         }
     }
+
+    public function toAlgebraic(): ComplexNumberInterface
+    {
+        return new ComplexNumberAlgebraic(
+            [
+                'r' => $this->getReal(),
+                'i' => $this->getImaginary()
+            ]
+        );
+    }
+
+    public function toTrigonometric(): ComplexNumberInterface
+    {
+        return $this;
+    }
+
+    public function getType(): string
+    {
+        return self::TYPE;
+    }
+
+    /**
+     * сложение комплексных чисел
+     * @param ComplexNumberInterface $b
+     * @return ComplexNumberInterface
+     */
+    public function add(ComplexNumberInterface $b): ComplexNumberInterface
+    {
+        /** @var ComplexNumberTrigonometric $valB */
+        $valB = $b->toTrigonometric();
+
+        $dSin = sin($valB->getAngle() - $this->angle);
+        $dCos = cos($valB->getAngle() - $this->angle);
+
+        $newMagnitude = sqrt(($this->magnitude * $this->magnitude) +
+            ($valB->getMagnitude() * $valB->getMagnitude()) +
+            2 * $this->magnitude * $valB->getMagnitude() * $dCos);
+
+        $newAngle = $this->angle +
+            atan2($valB->getMagnitude() * $dSin, $this->magnitude + $b->getMagnitude() * $dCos);
+
+        return new ComplexNumberTrigonometric(
+            [
+                'm' => $newMagnitude,
+                'a' => $newAngle
+            ]
+        );
+    }
+
+    /**
+     * приведение к отрицательному значению
+     * @param ComplexNumberInterface $x
+     * @return ComplexNumberInterface
+     */
+    public function inverse(): ComplexNumberTrigonometric
+    {
+        $newAngle = $this->angle > 0 ? ($this->angle - 3.141592653) : ($this->angle + 3.141592653);
+
+        return new ComplexNumberTrigonometric(
+            [
+                'm' => $this->magnitude,
+                'a' => $newAngle
+            ]
+        );
+    }
+
 }
