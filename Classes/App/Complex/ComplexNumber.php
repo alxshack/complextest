@@ -11,6 +11,11 @@ namespace App\Complex;
 class ComplexNumber
 {
 
+    private bool $isTrigonometric = false;
+
+    private float $angle;
+    private float $magnitude;
+
     private float $real;
     private float $imaginary;
     private bool $isDividedByZero = false;
@@ -102,7 +107,11 @@ class ComplexNumber
      */
     public function getReal(): float
     {
-        return $this->real;
+        if (!$this->isTrigonometric) {
+            return $this->real;
+        } else {
+            return $this->magnitude * cos($this->angle);
+        }
     }
 
     /**
@@ -110,7 +119,35 @@ class ComplexNumber
      */
     public function getImaginary(): float
     {
-        return $this->imaginary;
+        if (!$this->isTrigonometric) {
+            return $this->imaginary;
+        } else {
+            return $this->magnitude * sin($this->angle);
+        }
+    }
+
+    /**
+     * @return float
+     */
+    public function getMagnitude(): float
+    {
+        if ($this->isTrigonometric) {
+            return $this->magnitude;
+        } else {
+            return sqrt(($this->real * $this->real) + ($this->imaginary * $this->imaginary));
+        }
+    }
+
+    /**
+     * @return float
+     */
+    public function getAngle(): float
+    {
+        if ($this->isTrigonometric) {
+            return $this->angle;
+        } else {
+            return atan2($this->imaginary, $this->real);
+        }
     }
 
     /**
@@ -143,4 +180,29 @@ class ComplexNumber
             throw new \Exception('Неверный строковый формат описания комплексного числа');
         }
     }
+
+    public function toTrigonometric()
+    {
+        if ($this->isTrigonometric) {
+            return $this;
+        }
+
+        $this->angle = $this->getAngle();
+        $this->magnitude = $this->getMagnitude();
+        $this->isTrigonometric = true;
+        return $this;
+    }
+
+    public function toAlgebraic()
+    {
+        if (!$this->isTrigonometric) {
+            return $this;
+        }
+
+        $this->real = $this->getReal();
+        $this->imaginary = $this->getImaginary();
+        $this->isTrigonometric = false;
+        return $this;
+    }
+
 }
