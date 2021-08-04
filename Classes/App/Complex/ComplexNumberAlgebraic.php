@@ -8,8 +8,10 @@
 namespace App\Complex;
 
 
-class ComplexNumber
+class ComplexNumberAlgebraic implements ComplexNumberInterface
 {
+
+    const TYPE = 'algebraic';
 
     private float $real;
     private float $imaginary;
@@ -27,7 +29,7 @@ class ComplexNumber
      * @param mixed $params
      * @return $this
      */
-    public function setValue($params): ComplexNumber
+    public function setValue($params): ComplexNumberInterface
     {
         try {
             switch (gettype($params)) {
@@ -81,7 +83,7 @@ class ComplexNumber
      * @param float $real
      * @return $this
      */
-    public function setReal(float $real): ComplexNumber
+    public function setReal(float $real): ComplexNumberInterface
     {
         $this->real = $real;
         return $this;
@@ -91,7 +93,7 @@ class ComplexNumber
      * @param float $imaginary
      * @return $this
      */
-    public function setImaginary(float $imaginary): ComplexNumber
+    public function setImaginary(float $imaginary): ComplexNumberInterface
     {
         $this->imaginary = $imaginary;
         return $this;
@@ -113,16 +115,38 @@ class ComplexNumber
         return $this->imaginary;
     }
 
+    public function setAngle(float $real): ComplexNumberInterface
+    {
+        return $this;
+    }
+
+    public function setMagnitude(): ComplexNumberInterface
+    {
+        return $this;
+    }
+
+    public function getAngle(): float
+    {
+        return 0;
+    }
+
+    public function getMagnitude(): float
+    {
+        return 0;
+    }
+
     /**
      * Устанавливается статус деления на ноль
      */
-    public function setIsDividedByZero(): ComplexNumber
+    public function setIsDividedByZero(): ComplexNumberInterface
     {
         $this->isDividedByZero = true;
         return $this;
     }
 
     /**
+     * вывод в человеко-читаемом формате
+     * @param bool $isTrigonometric вывод в тригонометрическом представлении
      * @return string
      */
     public function toPrinted(): string
@@ -130,8 +154,10 @@ class ComplexNumber
         if ($this->isDividedByZero) {
             return '[divide_by_zero]';
         }
+
         $separator = ($this->imaginary >= 0) ? '+' : '';
         return $this->real . $separator . $this->imaginary . 'i';
+
     }
 
     private function parseComplex($param)
