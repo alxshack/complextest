@@ -7,73 +7,68 @@
 
 namespace App\Complex;
 
-use App\Complex\ComplexNumber;
+use App\Complex\ComplexNumberInterface;
 
 class ComplexMath
 {
 
     /**
      * сложение комплексных чисел
-     * @param ComplexNumber $x
-     * @param ComplexNumber $y
-     * @return ComplexNumber
+     * @deprecated используй нестатический метод у слагаемого: $x->add($y), сохранено для совместимости
+     * @param ComplexNumberInterface $x
+     * @param ComplexNumberInterface $y
+     * @return ComplexNumberInterface
      */
-    public static function add(ComplexNumber $x, ComplexNumber $y): ComplexNumber
+    public static function add(ComplexNumberInterface $x, ComplexNumberInterface $y): ComplexNumberInterface
     {
-        $newReal = $x->getReal() + $y->getReal();
-        $newImaginary = $x->getImaginary() + $y->getImaginary();
-        return (new ComplexNumber())
-            ->setReal($newReal)
-            ->setImaginary($newImaginary);
+        return $x->add($y);
     }
 
     /**
      * приведение к отрицательному значению
-     * @param ComplexNumber $x
-     * @return ComplexNumber
+     * @deprecated используй нестатический метод $x->inverse(), сохранено для совместимости
+     * @param ComplexNumberInterface $x
+     * @return ComplexNumberInterface
      */
-    public static function inverse(ComplexNumber $x): ComplexNumber
+    public static function inverse(ComplexNumberInterface $x): ComplexNumberInterface
     {
-        return (new ComplexNumber())
-            ->setReal(-$x->getReal())
-            ->setImaginary(-$x->getImaginary());
+        return $x->inverse();
     }
 
     /**
      * вычитание комплексных чисел
-     * @param ComplexNumber $x
-     * @param ComplexNumber $y
-     * @return ComplexNumber
+     * @deprecated используй нестатический метод $x->subtract(), сохранено для совместимости
+     * @param ComplexNumberInterface $x
+     * @param ComplexNumberInterface $y
+     * @return ComplexNumberInterface
      */
-    public static function substract(ComplexNumber $x, ComplexNumber $y): ComplexNumber
+    public static function subtract(ComplexNumberInterface $x, ComplexNumberInterface $y): ComplexNumberInterface
     {
-        return self::add($x, self::inverse($y));
+        return $x->subtract($y);
     }
 
-    public static function multiply(ComplexNumber $x, ComplexNumber $y): ComplexNumber
+    /**
+     * умножение комплексных чисел
+     * @deprecated используй нестатический метод $x->multiply(), сохранено для совместимости
+     * @param \App\Complex\ComplexNumberInterface $x
+     * @param \App\Complex\ComplexNumberInterface $y
+     * @return \App\Complex\ComplexNumberInterface
+     */
+    public static function multiply(ComplexNumberInterface $x, ComplexNumberInterface $y): ComplexNumberInterface
     {
-        $newReal = $x->getReal() * $y->getReal() - $x->getImaginary() * $y->getImaginary();
-        $newImaginary = $x->getReal() * $y->getImaginary() + $x->getImaginary() * $y->getReal();
-        return (new ComplexNumber())
-            ->setReal($newReal)
-            ->setImaginary($newImaginary);
+        return $x->multiply($y);
     }
 
-    public static function divide(ComplexNumber $x, ComplexNumber $y): ComplexNumber
+    /**
+     * деление комплексных чисел
+     * @deprecated используй нестатический метод $x->divide(), сохранено для совместимости
+     * @param \App\Complex\ComplexNumberInterface $x
+     * @param \App\Complex\ComplexNumberInterface $y
+     * @return \App\Complex\ComplexNumberInterface
+     */
+    public static function divide(ComplexNumberInterface $x, ComplexNumberInterface $y): ComplexNumberInterface
     {
-        $divider = $y->getReal() ** 2 + $y->getImaginary() ** 2;
-
-        if ($divider === 0) {
-            return (new ComplexNumber())
-                ->setValue(0)
-                ->setIsDividedByZero();
-        }
-
-        $newReal = ($x->getReal() * $y->getReal() + $x->getImaginary() * $y->getImaginary()) / $divider;
-        $newImaginary = ($x->getImaginary() * $y->getReal() - $x->getReal() * $y->getImaginary()) / $divider;
-        return (new ComplexNumber())
-            ->setReal($newReal)
-            ->setImaginary($newImaginary);
+        return $x->divide($y);
     }
 
 }

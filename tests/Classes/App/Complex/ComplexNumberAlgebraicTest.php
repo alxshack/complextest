@@ -4,14 +4,14 @@ namespace App\Complex;
 
 use PHPUnit\Framework\TestCase;
 
-class ComplexNumberTest extends TestCase
+class ComplexNumberAlgebraicTest extends TestCase
 {
 
-    private ComplexNumber $number;
+    private ComplexNumberAlgebraic $number;
 
     protected function setUp(): void
     {
-        $this->number = new ComplexNumber();
+        $this->number = new ComplexNumberAlgebraic();
     }
 
 
@@ -68,4 +68,30 @@ class ComplexNumberTest extends TestCase
         $this->number->setImaginary(0);
         $this->assertEquals('0+0i', $this->number);
     }
+
+    public function testToTrigonometric()
+    {
+
+        $this->number->setValue(['r' => 15, 'i' => 10]);
+        $trigonometric = $this->number->toTrigonometric();
+
+        $this->assertGreaterThan(0.5, $trigonometric->getAngle());
+        $this->assertLessThan(1, $trigonometric->getAngle());
+
+        $this->assertGreaterThan(18, $trigonometric->getMagnitude());
+        $this->assertLessThan(19, $trigonometric->getMagnitude());
+    }
+
+    public function testGetType()
+    {
+        $this->number->setValue(['r' => 20, 'i' => -15]);
+
+        $this->assertEquals('algebraic', $this->number->getType());
+
+        $trig = $this->number->toTrigonometric();
+
+        $this->assertEquals('trigonometric', $trig->getType());
+
+    }
+
 }
