@@ -7,13 +7,15 @@ use PHPUnit\Framework\TestCase;
 class ComplexMathTest extends TestCase
 {
 
-    private ComplexNumber $numberA;
-    private ComplexNumber $numberB;
+    private ComplexNumberInterface $numberA;
+    private ComplexNumberInterface $numberB;
 
     protected function setUp(): void
     {
-        $this->numberA = new ComplexNumber('1+1i');
-        $this->numberB = new ComplexNumber('-2-2i');
+        $this->numberA = new ComplexNumberAlgebraic('1+1i');
+        $this->numberB = new ComplexNumberAlgebraic('-2-2i');
+        $this->numberC = new ComplexNumberTrigonometric(['m' => 10, 'a' => 45]);
+        $this->numberD = new ComplexNumberTrigonometric(['m' => -15, 'a' => 90]);
     }
 
     public function testAdd()
@@ -21,7 +23,18 @@ class ComplexMathTest extends TestCase
         // используем значения, выставленные в setUp
         $this->assertEquals('-1-1i', ComplexMath::add($this->numberA, $this->numberB));
 
+        $result = ComplexMath::add($this->numberC, $this->numberD);
+        $this->assertGreaterThan(43, $result->getAngle());
+        $this->assertLessThan(44, $result->getAngle());
+
+        $this->assertGreaterThan(12, $result->getMagnitude());
+        $this->assertLessThan(13, $result->getMagnitude());
+
         // применяем другие значения
+        $this->numberA->setValue(['r'=>-5, 'i'=>5]);
+        $this->numberB->setValue(['r' => 10, 'i' => -10]);
+        $this->assertEquals('5-5i', ComplexMath::add($this->numberA, $this->numberB));
+
         $this->numberA->setValue(['r'=>-5, 'i'=>5]);
         $this->numberB->setValue(['r' => 10, 'i' => -10]);
         $this->assertEquals('5-5i', ComplexMath::add($this->numberA, $this->numberB));
@@ -32,20 +45,20 @@ class ComplexMathTest extends TestCase
         $this->assertEquals('5+5i', ComplexMath::add($this->numberA, $this->numberB));
     }
 
-    public function testSubstract()
+    public function testSubtract()
     {
         // используем значения, выставленные в setUp
-        $this->assertEquals('3+3i', ComplexMath::substract($this->numberA, $this->numberB));
+        $this->assertEquals('3+3i', ComplexMath::subtract($this->numberA, $this->numberB));
 
         // применяем другие значения
         $this->numberA->setValue(['r'=>-5, 'i'=>5]);
         $this->numberB->setValue(['r' => 10, 'i' => -10]);
-        $this->assertEquals('-15+15i', ComplexMath::substract($this->numberA, $this->numberB));
+        $this->assertEquals('-15+15i', ComplexMath::subtract($this->numberA, $this->numberB));
 
         // применяем другие значения
         $this->numberA->setValue([0, 5]);
         $this->numberB->setValue([5, 0]);
-        $this->assertEquals('-5+5i', ComplexMath::substract($this->numberA, $this->numberB));
+        $this->assertEquals('-5+5i', ComplexMath::subtract($this->numberA, $this->numberB));
     }
 
     public function testMultiply()

@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="ComplexNumberTrigonometricTest" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+    <TestRunner class="App\Complex\ComplexNumberTrigonometricTest" file="$PROJECT_DIR$/tests/Classes/App/Complex/ComplexNumberTrigonometricTest.php" method="testToPrinted" scope="Class" />
+    <method v="2" />
+  </configuration>
+</component>
