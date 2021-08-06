@@ -38,8 +38,39 @@ interface ComplexNumberInterface
      */
     public function getType(): string;
 
+    /**
+     * складывает комплексные числа
+     * @param ComplexNumberInterface $b
+     * @return ComplexNumberInterface
+     */
     public function add(ComplexNumberInterface $b): ComplexNumberInterface;
 
+
+    /**
+     * возвращает отрицательное комплексное число
+     * @return ComplexNumberInterface
+     */
     public function inverse(): ComplexNumberInterface;
+
+    /**
+     * возвращает разницу комплексных чисел
+     * @param ComplexNumberInterface $b
+     * @return ComplexNumberInterface
+     */
+    public function subtract(ComplexNumberInterface $b): ComplexNumberInterface;
+
+    /**
+     * умножение комплексных чисел
+     * @param ComplexNumberInterface $b
+     * @return ComplexNumberInterface
+     */
+    public function multiply(ComplexNumberInterface $b): ComplexNumberInterface;
+
+    /**
+     * деление комплексных чисел
+     * @param ComplexNumberInterface $b
+     * @return ComplexNumberInterface
+     */
+    public function divide(ComplexNumberInterface $b): ComplexNumberInterface;
 
 }

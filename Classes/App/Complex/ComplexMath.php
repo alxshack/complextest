@@ -35,41 +35,40 @@ class ComplexMath
         return $x->inverse();
     }
 
-//    /**
-//     * вычитание комплексных чисел
-//     * @param ComplexNumberInterface $x
-//     * @param ComplexNumberInterface $y
-//     * @return ComplexNumberInterface
-//     */
-//    public static function substract(ComplexNumberInterface $x, ComplexNumberInterface $y): ComplexNumberInterface
-//    {
-//        return self::add($x, self::inverse($y));
-//    }
+    /**
+     * вычитание комплексных чисел
+     * @deprecated используй нестатический метод $x->subtract(), сохранено для совместимости
+     * @param ComplexNumberInterface $x
+     * @param ComplexNumberInterface $y
+     * @return ComplexNumberInterface
+     */
+    public static function subtract(ComplexNumberInterface $x, ComplexNumberInterface $y): ComplexNumberInterface
+    {
+        return $x->subtract($y);
+    }
 
-//    public static function multiply(ComplexNumberInterface $x, ComplexNumberInterface $y): ComplexNumberInterface
-//    {
-//        $newReal = $x->getReal() * $y->getReal() - $x->getImaginary() * $y->getImaginary();
-//        $newImaginary = $x->getReal() * $y->getImaginary() + $x->getImaginary() * $y->getReal();
-//        return (new ComplexNumberInterface())
-//            ->setReal($newReal)
-//            ->setImaginary($newImaginary);
-//    }
+    /**
+     * умножение комплексных чисел
+     * @deprecated используй нестатический метод $x->multiply(), сохранено для совместимости
+     * @param \App\Complex\ComplexNumberInterface $x
+     * @param \App\Complex\ComplexNumberInterface $y
+     * @return \App\Complex\ComplexNumberInterface
+     */
+    public static function multiply(ComplexNumberInterface $x, ComplexNumberInterface $y): ComplexNumberInterface
+    {
+        return $x->multiply($y);
+    }
 
-//    public static function divide(ComplexNumberInterface $x, ComplexNumberInterface $y): ComplexNumberInterface
-//    {
-//        $divider = $y->getReal() ** 2 + $y->getImaginary() ** 2;
-//
-//        if ($divider === 0) {
-//            return (new ComplexNumberInterface())
-//                ->setValue(0)
-//                ->setIsDividedByZero();
-//        }
-//
-//        $newReal = ($x->getReal() * $y->getReal() + $x->getImaginary() * $y->getImaginary()) / $divider;
-//        $newImaginary = ($x->getImaginary() * $y->getReal() - $x->getReal() * $y->getImaginary()) / $divider;
-//        return (new ComplexNumberInterface())
-//            ->setReal($newReal)
-//            ->setImaginary($newImaginary);
-//    }
+    /**
+     * деление комплексных чисел
+     * @deprecated используй нестатический метод $x->divide(), сохранено для совместимости
+     * @param \App\Complex\ComplexNumberInterface $x
+     * @param \App\Complex\ComplexNumberInterface $y
+     * @return \App\Complex\ComplexNumberInterface
+     */
+    public static function divide(ComplexNumberInterface $x, ComplexNumberInterface $y): ComplexNumberInterface
+    {
+        return $x->divide($y);
+    }
 
 }

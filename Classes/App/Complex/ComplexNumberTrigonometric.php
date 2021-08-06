@@ -148,6 +148,10 @@ class ComplexNumberTrigonometric implements ComplexNumberInterface
         }
     }
 
+    /**
+     * перевод комплексного числа в алгебраическую форму
+     * @return ComplexNumberInterface
+     */
     public function toAlgebraic(): ComplexNumberInterface
     {
         return new ComplexNumberAlgebraic(
@@ -158,6 +162,10 @@ class ComplexNumberTrigonometric implements ComplexNumberInterface
         );
     }
 
+    /**
+     * перевод комплексного числа в тригонометрическую форму
+     * @return ComplexNumberInterface
+     */
     public function toTrigonometric(): ComplexNumberInterface
     {
         return $this;
@@ -168,11 +176,6 @@ class ComplexNumberTrigonometric implements ComplexNumberInterface
         return self::TYPE;
     }
 
-    /**
-     * сложение комплексных чисел
-     * @param ComplexNumberInterface $b
-     * @return ComplexNumberInterface
-     */
     public function add(ComplexNumberInterface $b): ComplexNumberInterface
     {
         /** @var ComplexNumberTrigonometric $valB */
@@ -196,21 +199,58 @@ class ComplexNumberTrigonometric implements ComplexNumberInterface
         );
     }
 
-    /**
-     * приведение к отрицательному значению
-     * @param ComplexNumberInterface $x
-     * @return ComplexNumberInterface
-     */
     public function inverse(): ComplexNumberTrigonometric
     {
-        $newAngle = $this->angle > 0 ? ($this->angle - 3.141592653) : ($this->angle + 3.141592653);
 
+        $newAngle = $this->angle > 0 ? ($this->angle - 3.141592653) : ($this->angle + 3.141592653);
         return new ComplexNumberTrigonometric(
             [
                 'm' => $this->magnitude,
                 'a' => $newAngle
             ]
         );
+    }
+
+    public function subtract(ComplexNumberInterface $b): ComplexNumberInterface
+    {
+        /** @var ComplexNumberTrigonometric $valB */
+        $valB = $b->toTrigonometric();
+        return $this->add($valB->inverse());
+    }
+
+    public function multiply(ComplexNumberInterface $b): ComplexNumberInterface
+    {
+        /** @var ComplexNumberTrigonometric $valB */
+        $valB = $b->toTrigonometric();
+        return new ComplexNumberTrigonometric(
+            [
+                'm' => $this->magnitude * $valB->getMagnitude(),
+                'a' => $this->angle + $valB->getAngle()
+            ]
+        );
+    }
+
+    public function divide(ComplexNumberInterface $b): ComplexNumberInterface
+    {
+        /** @var ComplexNumberTrigonometric $valB */
+        $valB = $b->toTrigonometric();
+
+        if ($valB->getMagnitude() == 0) {
+            $this->setIsDividedByZero();
+            $newMagnitude = 0;
+            $newAngle = 0;
+        } else {
+            $newMagnitude = $this->magnitude * $valB->getMagnitude();
+            $newAngle = $this->angle + $valB->getAngle();
+        }
+
+        return new ComplexNumberTrigonometric(
+            [
+                'm' => $newMagnitude,
+                'a' => $newAngle
+            ]
+        );
+
     }
 
 }

@@ -195,12 +195,60 @@ class ComplexNumberAlgebraic implements ComplexNumberInterface
      * @param ComplexNumberInterface $x
      * @return ComplexNumberInterface
      */
-    public function inverse(): ComplexNumberTrigonometric
+    public function inverse(): ComplexNumberAlgebraic
     {
         return new ComplexNumberAlgebraic(
             [
                 'r' => -$this->real,
                 'i' => -$this->imaginary
+            ]
+        );
+    }
+
+    /**
+     * вычитание комплексных чисел
+     * @param ComplexNumberInterface $b
+     * @return ComplexNumberInterface
+     */
+    public function subtract(ComplexNumberInterface $b): ComplexNumberInterface
+    {
+        /** @var ComplexNumberAlgebraic $valB */
+        $valB = $b->toAlgebraic();
+        return $this->add($valB->inverse());
+    }
+
+    public function multiply(ComplexNumberInterface $b): ComplexNumberInterface
+    {
+        /** @var ComplexNumberAlgebraic $valB */
+        $valB = $b->toAlgebraic();
+        return new ComplexNumberAlgebraic(
+            [
+                'r' => ($this->real * $valB->real) - ($this->imaginary * $valB->getImaginary()),
+                'i' => ($this->real * $valB->getImaginary()) + ($valB->getReal() * $this->imaginary)
+            ]
+        );
+    }
+
+    public function divide(ComplexNumberInterface $b): ComplexNumberInterface
+    {
+        /** @var ComplexNumberAlgebraic $valB */
+        $valB = $b->toAlgebraic();
+
+        $divider = $valB->getReal() ** 2 + $valB->getImaginary() ** 2;
+
+        if ($divider == 0) {
+            $this->setIsDividedByZero();
+            $newReal = 0;
+            $newImaginary = 0;
+        } else {
+            $newReal = ($this->real * $valB->getReal() + $this->imaginary * $valB->getImaginary()) / $divider;
+            $newImaginary = ($this->imaginary * $valB->getReal() - $this->real * $valB->getImaginary()) / $divider;;
+        }
+
+        return new ComplexNumberAlgebraic(
+            [
+                'r' => $newReal,
+                'i' => $newImaginary
             ]
         );
     }
